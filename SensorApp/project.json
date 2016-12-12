@@ -1,6 +1,15 @@
 ﻿{
   "dependencies": {
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
+    "Microsoft.Azure.Amqp": "1.1.5",
+    "Microsoft.Azure.Devices.Client": "1.1.2",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
+    "Newtonsoft.Json": "9.0.1",
+    "PCLCrypto": "2.0.147",
+    "PInvoke.BCrypt": "0.3.90",
+    "PInvoke.Kernel32": "0.3.90",
+    "PInvoke.NCrypt": "0.3.90",
+    "PInvoke.Windows.Core": "0.3.90",
+    "Validation": "2.3.5"
   },
   "frameworks": {
     "uap10.0": {}
