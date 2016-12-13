@@ -8,6 +8,13 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock x:Name="gpioStatus" FontSize="20" HorizontalAlignment="Left" Margin="10,531,0,0" TextWrapping="Wrap" Text="Status" VerticalAlignment="Top"/>
+        <TextBlock x:Name="gpioStatus" FontSize="20" HorizontalAlignment="Left" Margin="10,531,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+        <ListView>
+            <TextBlock x:Name="box1" Text="Waiting"></TextBlock>
+            <TextBlock x:Name="box2" Text="Waiting"></TextBlock>
+            <TextBlock x:Name="box3" Text="Waiting"></TextBlock>
+            <TextBlock x:Name="box4" Text="Waiting"></TextBlock>
+            <TextBlock x:Name="box5" Text="Waiting"></TextBlock>
+        </ListView>
     </Grid>
 </Page>
