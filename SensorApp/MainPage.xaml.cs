@@ -16,22 +16,16 @@ namespace SensorApp
     public sealed partial class MainPage : Page
     {
         private const int LIGHT_SENSOR_PIN = 26;
-        private const int TEMP_SENSOR_PIN = 19;
         private const int FLAME_SENSOR_PIN = 13;
         private const int METAL_SENSOR_PIN = 06;
         private const int GAS_SENSOR_PIN = 05;
         private const int KNOCK_SENSOR_PIN = 21;
-        private GpioPin lightPin, tempPin, flamePin, metalPin, gasPin, knockPin;
+        private GpioPin lightPin, flamePin, metalPin, gasPin, knockPin;
         private DispatcherTimer sensorTimer;
         private const int SENSOR_CHECK_TIME = 2000;    // number of milliseconds to get input from the tilt sensor
         private string deviceId = "Device01";
         int listPosition = 0;
-        enum ADCChip { mcp3008 }
-        private const string SPI_CONTROLLER_NAME = "SPI0";  /* For Raspberry Pi 2, use SPI0                             */
-        private const Int32 SPI_CHIP_SELECT_LINE = 0;       /* Line 0 maps to physical pin number 24 on the Rpi2        */
-        byte[] readBuffer = null;                           /* this is defined to hold the output data*/
-        byte[] writeBuffer = null;                          /* we will hold the command to send to the chipbuild this in the constructor for the chip we are using */
-        private SpiDevice SpiDisplay;
+        BMP280 BMP280;
 
         public MainPage()
         {
@@ -43,69 +37,28 @@ namespace SensorApp
             sensorTimer.Interval = TimeSpan.FromMilliseconds(SENSOR_CHECK_TIME);
             sensorTimer.Tick += Sensor_Timer_Tick;
 
-            if (lightPin != null && tempPin != null && flamePin != null && metalPin != null)
+            if (lightPin != null && flamePin != null && metalPin != null)
+            {
                 sensorTimer.Start();
+            }
             else
+            {
                 Debug.WriteLine("A sensor is null");
-
-            readBuffer = new byte[3] { 0x00, 0x00, 0x00 };
-            writeBuffer = new byte[3] { 0x01, 0x80, 0x00 };
-
-            InitSPI();
-        }
-
-        private async void InitSPI()
-        {
-            try
-            {
-                var settings = new SpiConnectionSettings(SPI_CHIP_SELECT_LINE);
-                settings.ClockFrequency = 500000;// 10000000;
-                settings.Mode = SpiMode.Mode3; //Mode3;
-                var controller = await SpiController.GetDefaultAsync();
-                SpiDisplay = controller.GetDevice(settings);
             }
-            catch (Exception ex)
-            {
-                throw new Exception("SPI Initialization Failed", ex);
-            }
-        }
-        private string getTemp()
-        {
-            SpiDisplay.TransferFullDuplex(writeBuffer, readBuffer);
-            int res = convertToInt(readBuffer);
-            return res.ToString();
-        }
-        private int convertToInt(byte[] data)
-        {
-            int result = 0;
-            result = data[1] & 0x03;
-            result <<= 8;
-            result += data[2];
-            return result;
-        }
 
-        private async void Sensor_Timer_Tick(object sender, object e)
+
+        } //This method will be called by the application framework when the page is first loaded
+       
+        private async void Sensor_Timer_Tick(object sender, object e)   
         {
             string flamePinRead, metalPinRead, gasPinRead, knockPinRead;
 
             getLight();
-            //getTemperature();
-            var tempPinRead = getTemp();
+            getTemp();
             flamePinRead = (flamePin.Read()).ToString();
             metalPinRead = (metalPin.Read()).ToString();
             gasPinRead = (gasPin.Read()).ToString();
             knockPinRead = (knockPin.Read()).ToString();
-
-            try
-            {
-                Debug.WriteLine("Temp: " + tempPinRead);
-                updateUI("Temp: " + tempPinRead);
-                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("tempSensor", tempPinRead, DateTime.Now));
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Exception:" + ex.ToString());
-            }
 
             if (gasPinRead.Equals("High"))
             {
@@ -152,14 +105,16 @@ namespace SensorApp
         {
             var gpio = GpioController.GetDefault();
 
+            InitTemp();
+
             lightPin = gpio.OpenPin(LIGHT_SENSOR_PIN);
-            tempPin = gpio.OpenPin(TEMP_SENSOR_PIN);
+            //tempPin = gpio.OpenPin(TEMP_SENSOR_PIN);
             flamePin = gpio.OpenPin(FLAME_SENSOR_PIN);
             metalPin = gpio.OpenPin(METAL_SENSOR_PIN);
             gasPin = gpio.OpenPin(GAS_SENSOR_PIN);
             knockPin = gpio.OpenPin(KNOCK_SENSOR_PIN);
 
-            tempPin.SetDriveMode(GpioPinDriveMode.Input);
+            //tempPin.SetDriveMode(GpioPinDriveMode.Input);
             flamePin.SetDriveMode(GpioPinDriveMode.Input);
             metalPin.SetDriveMode(GpioPinDriveMode.Input);
             gasPin.SetDriveMode(GpioPinDriveMode.Input);
@@ -193,7 +148,59 @@ namespace SensorApp
                 listPosition = 0;
         }
 
+        private async void InitTemp()
+        {
+            try
+            {
+                //Create a new object for our barometric sensor class
+                BMP280 = new BMP280();
+                //Initialize the sensor
+                await BMP280.Initialize();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception with init temp: " + ex.Message);
+            }
+        }
 
+        private async void getTemp()
+        {
+            try
+            {
+                
+
+                //Create variables to store the sensor data: temperature, pressure and altitude. 
+                //Initialize them to 0.
+                float temp = 0;
+                float pressure = 0;
+                float altitude = 0;
+
+                //Create a constant for pressure at sea level. 
+                //This is based on your local sea level pressure (Unit: Hectopascal)
+                const float seaLevelPressure = 1013.25f;
+
+                    temp = await BMP280.ReadTemperature();
+                    pressure = await BMP280.ReadPreasure();
+                    altitude = await BMP280.ReadAltitude(seaLevelPressure);
+
+                    //Write the values to your debug console
+                    Debug.WriteLine("Temperature: " + temp.ToString() + " deg C");
+                    Debug.WriteLine("Pressure: " + pressure.ToString() + " Pa");
+                    Debug.WriteLine("Altitude: " + altitude.ToString() + " m");
+
+                    updateUI("Temperature: " + temp.ToString() + " deg C");
+                    updateUI("Pressure: " + pressure.ToString() + " Pa");
+                    updateUI("Altitude: " + altitude.ToString() + " m");
+
+                    await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("temperature", temp.ToString() + " deg C", DateTime.Now));
+                    await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("pressure", pressure.ToString() + " Pa", DateTime.Now));
+                    await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("altitude", altitude.ToString() + " m", DateTime.Now));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+        }
         private async void getLight()
         {
             lightPin.SetDriveMode(GpioPinDriveMode.Output);
@@ -206,7 +213,7 @@ namespace SensorApp
             while (lightPin.Read() == GpioPinValue.Low)
                 measurement += 1;
 
-            Debug.WriteLine("Light:" + measurement);
+            //Debug.WriteLine("Light:" + measurement);
             updateUI("Light: " + measurement);
             await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("lightSensor", measurement.ToString(), DateTime.Now));
         } 
