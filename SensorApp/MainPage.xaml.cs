@@ -64,28 +64,28 @@ namespace SensorApp
             {
                 //Debug.WriteLine("Gas:" + gasPinRead);
                 updateUI("Gas:" + gasPinRead);
-                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("gasSensor", gasPinRead, DateTime.Now));
+                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("gas", gasPinRead, DateTime.Now));
             }
 
             if (flamePinRead.Equals("High"))
             {
                 //Debug.WriteLine("Knock:" + knockPinRead);
                 updateUI("Knock:" + knockPinRead);
-                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("knockSensor", knockPinRead, DateTime.Now));
+                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("knock", knockPinRead, DateTime.Now));
             }
 
             if (flamePinRead.Equals("High"))
             {
                 //Debug.WriteLine("Flame:" + flamePinRead);
                 updateUI("Flame:" + flamePinRead);
-                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("flameSensor", flamePinRead, DateTime.Now));
+                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("flame", flamePinRead, DateTime.Now));
             }
 
             if (metalPinRead.Equals("High"))
             {
                 //Debug.WriteLine("Metal:" + metalPinRead);
                 updateUI("Metal:" + metalPinRead);
-                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("metalSensor", metalPinRead, DateTime.Now));
+                await AzureIoTHub.SendDeviceToCloudMessageAsync(JSONify("metal", metalPinRead, DateTime.Now));
             }
         }
 
@@ -108,13 +108,11 @@ namespace SensorApp
             InitTemp();
 
             lightPin = gpio.OpenPin(LIGHT_SENSOR_PIN);
-            //tempPin = gpio.OpenPin(TEMP_SENSOR_PIN);
             flamePin = gpio.OpenPin(FLAME_SENSOR_PIN);
             metalPin = gpio.OpenPin(METAL_SENSOR_PIN);
             gasPin = gpio.OpenPin(GAS_SENSOR_PIN);
             knockPin = gpio.OpenPin(KNOCK_SENSOR_PIN);
 
-            //tempPin.SetDriveMode(GpioPinDriveMode.Input);
             flamePin.SetDriveMode(GpioPinDriveMode.Input);
             metalPin.SetDriveMode(GpioPinDriveMode.Input);
             gasPin.SetDriveMode(GpioPinDriveMode.Input);
@@ -167,8 +165,6 @@ namespace SensorApp
         {
             try
             {
-                
-
                 //Create variables to store the sensor data: temperature, pressure and altitude. 
                 //Initialize them to 0.
                 float temp = 0;
