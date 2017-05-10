@@ -30,7 +30,7 @@ Collects data from a variety of sensors using a Raspberry Pi running a Windows 1
     Endpoint=sb://iothub-ns-kristinott-86295-658bfe8745.servicebus.windows.net/;SharedAccessKeyName=sensorappkeyname;SharedAccessKey=superlongkey1234567901234567890=
     ```
 3. Fork the repo [SensorAppAzureFunction](https://github.com/kottofy/SensorAppAzureFunction) 
-and update the [function.json file](https://github.com/kottofy/SensorAppAzureFunction/blob/master/SensorReadingtoSQL/function.json) variable `path` with your IoT Hub name.
+and update the [function.json file](https://github.com/kottofy/SensorAppAzureFunction/blob/master/SensorReadingtoSQL/function.json) variable `path` with your IoT Hub Event Hub Compatible name.
 4. Create an [Azure SQL Server and Database](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-get-started-portal). In the Firewall settings, add your client IP. Copy or save the database ADO.NET connection string. Replace `Server=tcp:` with `data source=` and fill in the username and password so that the string goes from
     ```
     Server=tcp:senserapp.database.windows.net,1433;Initial Catalog=SensorDB;Persist Security Info=False;User ID={your_username};Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
