@@ -10,6 +10,8 @@ Collects data from a variety of sensors using a Raspberry Pi running a Windows 1
 - Adafruit BMP280 Barometric Pressure + Temperature Sensor
 - Keyes KY-028 Light Sensor
 
+![raspberry pi setup](images/raspberry-pi-setup.png)
+
 ## Technologies
 - Windows 10 IoT Core
 - Windows UWP App on Pi
