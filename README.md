@@ -65,5 +65,8 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
 4. In the Routes blade for the IoT Hub, create a new routing rule with an appropriate name, data source as DeviceMessages, Query string `Alert = "alert!"`, and Endpoint set to the endpoint created in step 3. See example below.
     ![route creation](images/route-creation.png)
 5. In the Azure Function Application Settings, update the value for `eventhubconnectionstring` under App settings with the url copied in step 3.
+6. (Optional) Setup a Logic App to send an email (or use another service) to notify when an "alert" message enters the event hub.
+    ![Logic App](images/logic-app.png)
 
 *Note, to change the routing, update the AzureIoTHub.cs file where it says `msg.Properties.Add("Alert", "alert!");` with the property and message you would like to query on or add additional properties. Update the [Azure IoT Hub route query](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-query-language).
+
