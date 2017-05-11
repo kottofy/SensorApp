@@ -60,8 +60,8 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
 2. Update the Azure Function function.json file for the SensorReadingtoSQL file `path` variable with the value of the event hub name. Push to GitHub and the Azure Function should automatically pull the update.
 3. In the Endpoints blade on the IoT Hub, create an Endpoint on the IoT Hub that has an endpoint type of Service Bus Queue and points to the queue created in step 1. Choose an appropriate name. Copy the endpoint url for a later step. See example below.
     ![endpoint creation](images/endpoint-creation.png)
-4. In the Routes blade for the IoT Hub, create a new routing rule with an appropriate name, data source as DeviceMessages, Query string `DeviceId = "SensorDevice"`, and Endpoint set to the endpoint created in step 3. See example below.
+4. In the Routes blade for the IoT Hub, create a new routing rule with an appropriate name, data source as DeviceMessages, Query string `Alert = "alert!"`, and Endpoint set to the endpoint created in step 3. See example below.
     ![route creation](images/route-creation.png)
 5. In the Azure Function Application Settings, update the value for `eventhubconnectionstring` under App settings with the url copied in step 3.
 
-*Note, to change the routing, update the AzureIoTHub.cs file where it says `msg.Properties.Add("DeviceId", deviceId);` with the property you would like to query on or add properties. Update the [Azure IoT Hub route query](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-query-language).
+*Note, to change the routing, update the AzureIoTHub.cs file where it says `msg.Properties.Add("Alert", "alert!");` with the property and message you would like to query on or add additional properties. Update the [Azure IoT Hub route query](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-query-language).
