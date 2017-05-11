@@ -18,7 +18,7 @@ namespace SensorApp
         TempSensor tempSensor;
         LightSensor lightSensor;
         string deviceId = "SensorDevice";
-        Sensor[] sensors = new Sensor[3];
+        Sensor[] sensors = new Sensor[4];
 
         public MainPage()
         {

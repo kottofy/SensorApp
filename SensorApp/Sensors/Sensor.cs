@@ -26,11 +26,11 @@ namespace SensorApp
 
         public void ReadSensor()
         {
-            Debug.WriteLine("Reading sensor.");
+            Debug.WriteLine("Reading " + this.sensorType);
 
             this.value = (gpioPin.Read()).ToString();
 
-            Debug.WriteLine("Finished reading sensor.");
+            Debug.WriteLine("Finished reading sensor, value is " + this.value);
 
         }
     }
