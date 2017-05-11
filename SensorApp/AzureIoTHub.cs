@@ -2,8 +2,8 @@
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices.Client;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Diagnostics;
+
 
 namespace SensorApp
 {
@@ -13,9 +13,22 @@ namespace SensorApp
 
         public static async Task SendDeviceToCloudMessageAsync(string deviceId, string sensorType, string sensorValue)
         {
-            var deviceClient = DeviceClient.CreateFromConnectionString(deviceConnectionString, TransportType.Amqp);    
-            var message = new Message(Encoding.ASCII.GetBytes(JSONify(deviceId, sensorType, sensorValue, DateTime.Now)));
-            await deviceClient.SendEventAsync(message);
+            var deviceClient = DeviceClient.CreateFromConnectionString(deviceConnectionString, TransportType.Amqp);
+            var sensorMessage = (new SensorMessage(deviceId, sensorType, sensorValue)).JSONify();
+            var msg = new Message(Encoding.ASCII.GetBytes(sensorMessage));
+
+            //for IoT Hub Routing
+            msg.Properties.Add("DeviceId", deviceId);
+
+            try
+            {
+                await deviceClient.SendEventAsync(msg);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Exception: " + e);
+                return;
+            }
         }
 
         public static async Task<string> ReceiveCloudToDeviceMessageAsync()
@@ -35,18 +48,6 @@ namespace SensorApp
 
                 await Task.Delay(TimeSpan.FromSeconds(1));
             }
-        }
-
-
-        private static string JSONify(string deviceId, string sensorType, string sensorValue, DateTime outputTime)
-        {
-            //do some fancy JSON stuff to convert the message to a JSON
-            Dictionary<string, string> json_message = new Dictionary<string, string>();
-            json_message.Add("DeviceId", deviceId);
-            json_message.Add("SensorType", sensorType);
-            json_message.Add("SensorValue", sensorValue);
-            json_message.Add("OutputTime", outputTime.ToString());
-            return JsonConvert.SerializeObject(json_message);
         }
     }
 }

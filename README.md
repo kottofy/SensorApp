@@ -1,3 +1,5 @@
+## **Update: See the newly added steps for IoT Hub Routing**
+
 # Sensor App
 Collects data from a variety of sensors using a Raspberry Pi running a Windows 10 IoT Core UWP app and stores it in an Azure SQL Database. 
 
@@ -52,3 +54,11 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
     * Double click on Properties in the Solution Explorer and update the Debug section
 5. Run the project on the Remote Machine
     * Nuget packages may need to be restored and project may need to be built or rebuilt and few times.
+
+## Steps for IoT Hub Routing
+1. Create a [Service Bus Event Hub](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
+2. Update the Azure Function function.json file for the SensorReadingtoSQL file `path` variable with the value of the event hub name. Push to GitHub and the Azure Function should automatically pull the update.
+3. In the Endpoints blade on the IoT Hub, create an Endpoint on the IoT Hub that has an endpoint type of Service Bus Queue and points to the queue created in step 1. Choose an appropriate name. See example below.
+    ![endpoint creation](images/endpoint-creation.png)
+4. In the Routes blade for the IoT Hub, create a new routing rule with an appropriate name, data source as DeviceMessages, Query string `DeviceId = "SensorDevice"`, and Endpoint set to the endpoint created in step 3. See example below.
+    ![route creation](images/route-creation.png)
