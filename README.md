@@ -63,3 +63,5 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
 4. In the Routes blade for the IoT Hub, create a new routing rule with an appropriate name, data source as DeviceMessages, Query string `DeviceId = "SensorDevice"`, and Endpoint set to the endpoint created in step 3. See example below.
     ![route creation](images/route-creation.png)
 5. In the Azure Function Application Settings, update the value for `eventhubconnectionstring` under App settings with the url copied in step 3.
+
+*Note, to change the routing, update the AzureIoTHub.cs file where it says `msg.Properties.Add("DeviceId", deviceId);` with the property you would like to query on or add properties. Update the [Azure IoT Hub route query](https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-query-language).
