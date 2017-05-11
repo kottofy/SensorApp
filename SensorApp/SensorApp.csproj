@@ -101,6 +101,8 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sensors\BMP280.cs" />
+    <Compile Include="Sensors\LightSensor.cs" />
+    <Compile Include="SensorMessage.cs" />
     <Compile Include="Sensors\Sensor.cs" />
     <Compile Include="Sensors\TempSensor.cs" />
   </ItemGroup>

@@ -80,7 +80,7 @@ namespace SensorApp
         //Method to initialize the BMP280 sensor
         public async Task Initialize()
         {
-            Debug.WriteLine("BMP280::Initialize");
+            //Debug.WriteLine("BMP280::Initialize");
 
             try
             {
@@ -109,18 +109,18 @@ namespace SensorApp
         }
         private async Task Begin()
         {
-            Debug.WriteLine("BMP280::Begin");
+            //Debug.WriteLine("BMP280::Begin");
             byte[] WriteBuffer = new byte[] { (byte)eRegisters.BMP280_REGISTER_CHIPID };
             byte[] ReadBuffer = new byte[] { 0xFF };
 
             //Read the device signature
             bmp280.WriteRead(WriteBuffer, ReadBuffer);
-            Debug.WriteLine("BMP280 Signature: " + ReadBuffer[0].ToString());
+            //Debug.WriteLine("BMP280 Signature: " + ReadBuffer[0].ToString());
 
             //Verify the device signature
             if (ReadBuffer[0] != BMP280_Signature)
             {
-                Debug.WriteLine("BMP280::Begin Signature Mismatch.");
+                //Debug.WriteLine("BMP280::Begin Signature Mismatch.");
                 return;
             }
 

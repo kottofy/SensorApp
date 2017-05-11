@@ -1,32 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.Devices.Gpio;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using Newtonsoft.Json;
-using Windows.Devices.Spi;
 
 namespace SensorApp
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         private DispatcherTimer sensorTimer;
-        private const int SENSOR_CHECK_TIME = 2000,
+        private const int SENSOR_CHECK_TIME = 20000,
             FLAME_SENSOR_PIN = 13,
             METAL_SENSOR_PIN = 06,
-            LIGHT_SENSOR_PIN = 26,
             GAS_SENSOR_PIN = 05,
             KNOCK_SENSOR_PIN = 21;
         int listPosition = 0;
-        Sensor lightSensor, flameSensor, metalSensor, gasSensor, knockSensor;
+        Sensor flameSensor, metalSensor, gasSensor, knockSensor;
         TempSensor tempSensor;
-        string deviceId = "Device01";
-        Sensor[] sensors = new Sensor[5];
+        LightSensor lightSensor;
+        string deviceId = "SensorDevice";
+        Sensor[] sensors = new Sensor[3];
 
         public MainPage()
         {
@@ -42,47 +34,48 @@ namespace SensorApp
 
         private void InitSensors()
         {
-            lightSensor = new Sensor(LIGHT_SENSOR_PIN, "light");
             flameSensor = new Sensor(FLAME_SENSOR_PIN, "flame");
             metalSensor = new Sensor(METAL_SENSOR_PIN, "metal");
             gasSensor = new Sensor(GAS_SENSOR_PIN, "gas");
             knockSensor = new Sensor(KNOCK_SENSOR_PIN, "knock");
             tempSensor = new TempSensor();
+            lightSensor = new LightSensor();
 
-            sensors[0] = lightSensor;
-            sensors[1] = flameSensor;
-            sensors[2] = metalSensor;
-            sensors[3] = gasSensor;
-            sensors[4] = knockSensor;
+            sensors[0] = flameSensor;
+            sensors[1] = metalSensor;
+            sensors[2] = gasSensor;
+            sensors[3] = knockSensor;
         }
 
         private async void Sensor_Timer_Tick(object sender, object e)   
         {
             await lightSensor.getLight();
             await tempSensor.getTemp();
-            flameSensor.readSensor();
-            metalSensor.readSensor();
-            gasSensor.readSensor();
-            knockSensor.readSensor();
+            flameSensor.ReadSensor();
+            metalSensor.ReadSensor();
+            gasSensor.ReadSensor();
+            knockSensor.ReadSensor();
 
-            foreach (var snsr in sensors)
+            foreach (Sensor snsr in sensors)
             {
                 Debug.WriteLine("Sensor: " + snsr.sensorType + ", value: " + snsr.value);
 
-                if (snsr.value.Equals("High"))
+                if ((snsr.value).Equals("High"))
                 {
-                    updateUI(snsr.sensorType, snsr.value);
                     await AzureIoTHub.SendDeviceToCloudMessageAsync(deviceId, snsr.sensorType, snsr.value);
                 }
+                updateUI(snsr.sensorType, snsr.value);
             }
 
             updateUI("Temperature", tempSensor.temperature);
             updateUI("Pressure", tempSensor.pressure);
             updateUI("Altitude", tempSensor.altitude);
+            updateUI("Light", lightSensor.lightValue);
 
             await AzureIoTHub.SendDeviceToCloudMessageAsync(deviceId, "Temperature", tempSensor.temperature);
             await AzureIoTHub.SendDeviceToCloudMessageAsync(deviceId, "Pressure", tempSensor.pressure);
             await AzureIoTHub.SendDeviceToCloudMessageAsync(deviceId, "Altitude", tempSensor.altitude);
+            await AzureIoTHub.SendDeviceToCloudMessageAsync(deviceId, "Light", lightSensor.lightValue);
         }
 
         private void updateUI(string type, string value)
