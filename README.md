@@ -42,7 +42,7 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
     data source=senserapp.database.windows.net;initial catalog=SensorDB;persist security info=True;user id=username;password=p@ssw0rd;MultipleActiveResultSets=True;App=EntityFramework
     ```
 5. Create an [Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment) from the source code from step 3. 
-6. Go into the Application Settings and create the variable named `connectionstring` under App settings and paste the endpoint url from step 1 as the value. 
+6. Go into the Application Settings and create the variable named `eventhubconnectionstring` under App settings and paste the endpoint url from step 1 as the value. 
 7. Create the variable `SensorReadingContext` under Connection strings and paste the value from step 4.
 
 
@@ -58,7 +58,8 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
 ## Steps for IoT Hub Routing
 1. Create a [Service Bus Event Hub](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).
 2. Update the Azure Function function.json file for the SensorReadingtoSQL file `path` variable with the value of the event hub name. Push to GitHub and the Azure Function should automatically pull the update.
-3. In the Endpoints blade on the IoT Hub, create an Endpoint on the IoT Hub that has an endpoint type of Service Bus Queue and points to the queue created in step 1. Choose an appropriate name. See example below.
+3. In the Endpoints blade on the IoT Hub, create an Endpoint on the IoT Hub that has an endpoint type of Service Bus Queue and points to the queue created in step 1. Choose an appropriate name. Copy the endpoint url for a later step. See example below.
     ![endpoint creation](images/endpoint-creation.png)
 4. In the Routes blade for the IoT Hub, create a new routing rule with an appropriate name, data source as DeviceMessages, Query string `DeviceId = "SensorDevice"`, and Endpoint set to the endpoint created in step 3. See example below.
     ![route creation](images/route-creation.png)
+5. In the Azure Function Application Settings, update the value for `eventhubconnectionstring` under App settings with the url copied in step 3.
