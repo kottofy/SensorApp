@@ -44,6 +44,8 @@ and update the [function.json file](https://github.com/kottofy/SensorAppAzureFun
 5. Create an [Azure Function](https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment) from the source code from step 3. 
 6. Go into the Application Settings and create the variable named `eventhubconnectionstring` under App settings and paste the endpoint url from step 1 as the value. 
 7. Create the variable `SensorReadingContext` under Connection strings and paste the value from step 4.
+8. To check that the setup is working, head over to the Azure Function logs on the SensorReadingtoSQL function.
+    ![azure function logs](images/azure-function-logs.png)
 
 
 ## Steps to run the Raspberry Pi App

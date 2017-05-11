@@ -18,7 +18,8 @@ namespace SensorApp
             var msg = new Message(Encoding.ASCII.GetBytes(sensorMessage));
 
             //for IoT Hub Routing
-            msg.Properties.Add("DeviceId", deviceId);
+            if (sensorValue.Equals("High"))
+                msg.Properties.Add("Alert", "alert!");
 
             try
             {
