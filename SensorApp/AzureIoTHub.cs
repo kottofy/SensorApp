@@ -33,9 +33,9 @@ namespace SensorApp
             }
         }
 
-        public static async Task<string> ReceiveCloudToDeviceMessageAsync()
+        public static async Task<string> ReceiveCloudToDeviceMessageAsync(String deviceId)
         {
-            var deviceClient = DeviceClient.CreateFromConnectionString(deviceConnectionString, TransportType.Amqp);
+            var deviceClient = DeviceClient.Create(iotHubUri, AuthenticationMethodFactory.CreateAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey), TransportType.Amqp);
 
             while (true)
             {
