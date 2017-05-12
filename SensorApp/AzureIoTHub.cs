@@ -9,11 +9,12 @@ namespace SensorApp
 {
     static class AzureIoTHub
     {
-        const string deviceConnectionString = "***DEVICE CONNECTION STRING HERE***";
+        //const string iotHubUri = "Your-IoT-Hub-Hostname";
+        //const string deviceKey = "Your-device-key";
 
         public static async Task SendDeviceToCloudMessageAsync(string deviceId, string sensorType, string sensorValue)
         {
-            var deviceClient = DeviceClient.CreateFromConnectionString(deviceConnectionString, TransportType.Amqp);
+            var deviceClient = DeviceClient.Create(iotHubUri, AuthenticationMethodFactory.CreateAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey), TransportType.Amqp);
             var sensorMessage = (new SensorMessage(deviceId, sensorType, sensorValue)).JSONify();
             var msg = new Message(Encoding.ASCII.GetBytes(sensorMessage));
 
