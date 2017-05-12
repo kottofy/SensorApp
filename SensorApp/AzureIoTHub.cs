@@ -9,8 +9,8 @@ namespace SensorApp
 {
     static class AzureIoTHub
     {
-        //const string iotHubUri = "Your-IoT-Hub-Hostname";
-        //const string deviceKey = "Your-device-key";
+        const string iotHubUri = "Your-IoT-Hub-Hostname";
+        const string deviceKey = "Your-device-key";
 
         public static async Task SendDeviceToCloudMessageAsync(string deviceId, string sensorType, string sensorValue)
         {
